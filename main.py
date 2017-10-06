@@ -40,17 +40,25 @@ class QueueOfTiles():
         print(Item, end="")
       print()
 
-def CreateTileDictionary():
-  TileDictionary = dict()
+def CreateTileLibrary():
+  TileLibrary = []
   for Count in range(26):
+    TileLibrary.append(chr(65 + Count))
+  TileLibrary.append(chr(32))
+  return TileLibrary
+
+def CreateTileDictionary():
+  TileLibrary = CreateTileLibrary()
+  TileDictionary = dict()
+  for Count in range(len(TileLibrary)):
     if Count in [0, 4, 8, 13, 14, 17, 18, 19]:
-      TileDictionary[chr(65 + Count)] = 1
+      TileDictionary[TileLibrary[Count]] = 1
     elif Count in [1, 2, 3, 6, 11, 12, 15, 20]:
-      TileDictionary[chr(65 + Count)] = 2
-    elif Count in [5, 7, 10, 21, 22, 24]:
-      TileDictionary[chr(65 + Count)] = 3
+      TileDictionary[TileLibrary[Count]] = 2
+    elif Count in [5, 7, 10, 21, 22, 24, 26]:
+      TileDictionary[TileLibrary[Count]] = 3
     else:
-      TileDictionary[chr(65 + Count)] = 5
+      TileDictionary[TileLibrary[Count]] = 5
   return TileDictionary
     
 def DisplayTileValues(TileDictionary, AllowedWords):
@@ -71,7 +79,7 @@ def GetStartingHand(TileQueue, StartHandSize):
 def LoadAllowedWords():
   AllowedWords = []
   try:
-    WordsFile = open("chilwell.txt", "r")
+    WordsFile = open("chilwellwords.txt", "r")
     for Word in WordsFile:
       AllowedWords.append(Word.strip().upper())
     WordsFile.close()
@@ -96,7 +104,7 @@ def CheckWordIsValid(Word, AllowedWords):
     if AllowedWords[Count] == Word:
       ValidWord = True
     Count += 1
-  return ValidWord
+  return ValidWord 
 
 def AddEndOfTurnTiles(TileQueue, PlayerTiles, NewTileChoice, Choice):
   if NewTileChoice == "1":
@@ -257,9 +265,9 @@ def DisplayMenu():
   print()
   
 def Main():
-  print("++++++++++++++++++++++++++++++++++++++")
+  print("+++++++++++++++++++++++++++++++++++++++++++")
   print("+ Welcome to the WORDS WITH CHILWELL game +")
-  print("++++++++++++++++++++++++++++++++++++++")
+  print("+++++++++++++++++++++++++++++++++++++++++++")
   print()
   print()
   AllowedWords = LoadAllowedWords()
