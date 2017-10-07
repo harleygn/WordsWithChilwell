@@ -28,12 +28,13 @@ class QueueOfTiles():
 
   def Add(self):
     if self._Rear < self._MaxSize - 1:
-      RandNo = random.randint(0, 25)
+      TileLibrary = CreateTileLibrary()
+      RandNo = random.randint(0, 26)
       self._Rear += 1
-      self._Contents[self._Rear] = chr(65 + RandNo)
+      self._Contents[self._Rear] = TileLibrary[RandNo]
 
   def Show(self):
-    if self._Rear != -1:
+    if self._Rear != - 1:
       print()
       print("The contents of the queue are: ", end="")
       for Item in self._Contents:
@@ -44,18 +45,18 @@ def CreateTileLibrary():
   TileLibrary = []
   for Count in range(26):
     TileLibrary.append(chr(65 + Count))
-  TileLibrary.append(chr(32))
+  TileLibrary.append(chr(9608))
   return TileLibrary
 
 def CreateTileDictionary():
   TileLibrary = CreateTileLibrary()
   TileDictionary = dict()
-  for Count in range(len(TileLibrary)):
+  for Count in range(26):
     if Count in [0, 4, 8, 13, 14, 17, 18, 19]:
       TileDictionary[TileLibrary[Count]] = 1
     elif Count in [1, 2, 3, 6, 11, 12, 15, 20]:
       TileDictionary[TileLibrary[Count]] = 2
-    elif Count in [5, 7, 10, 21, 22, 24, 26]:
+    elif Count in [5, 7, 10, 21, 22, 24]:
       TileDictionary[TileLibrary[Count]] = 3
     else:
       TileDictionary[TileLibrary[Count]] = 5
@@ -93,9 +94,13 @@ def CheckWordIsInTiles(Word, PlayerTiles):
   for Count in range(len(Word)):
     if Word[Count] in CopyOfTiles:
       CopyOfTiles = CopyOfTiles.replace(Word[Count], "", 1)
+    elif Word[Count] not in CopyOfTiles:
+      for Count in range (len(Word)):
+        if Word[Count] == "█":
+          CopyOfTiles = CopyOfTiles.replace(Word[Count], "", 1)
     else:
       InTiles = False
-  return InTiles 
+  return InTiles
 
 def CheckWordIsValid(Word, AllowedWords):
   ValidWord = False
@@ -116,7 +121,7 @@ def AddEndOfTurnTiles(TileQueue, PlayerTiles, NewTileChoice, Choice):
   for Count in range(NoOfEndOfTurnTiles):
     PlayerTiles += TileQueue.Remove()
     TileQueue.Add()
-  return TileQueue, PlayerTiles  
+  return TileQueue, PlayerTiles
 
 def FillHandWithTiles(TileQueue, PlayerTiles, MaxHandSize):
   while len(PlayerTiles) <= MaxHandSize:
