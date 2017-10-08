@@ -51,13 +51,15 @@ def CreateTileLibrary():
 def CreateTileDictionary():
   TileLibrary = CreateTileLibrary()
   TileDictionary = dict()
-  for Count in range(26):
+  for Count in range(27):
     if Count in [0, 4, 8, 13, 14, 17, 18, 19]:
       TileDictionary[TileLibrary[Count]] = 1
     elif Count in [1, 2, 3, 6, 11, 12, 15, 20]:
       TileDictionary[TileLibrary[Count]] = 2
     elif Count in [5, 7, 10, 21, 22, 24]:
       TileDictionary[TileLibrary[Count]] = 3
+    elif Count == 26:
+      TileDictionary[TileLibrary[Count]] = 0
     else:
       TileDictionary[TileLibrary[Count]] = 5
   return TileDictionary
