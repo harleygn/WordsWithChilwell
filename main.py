@@ -45,7 +45,7 @@ def CreateTileLibrary():
   TileLibrary = []
   for Count in range(26):
     TileLibrary.append(chr(65 + Count))
-  TileLibrary.append(chr(9608))
+  TileLibrary.append(chr(9610))
   return TileLibrary
 
 def CreateTileDictionary():
