@@ -1,3 +1,8 @@
+# Skeleton Program code for the AQA A Level Paper 1 2018 examination
+# this code should be used in conjunction with the Preliminary Material
+# written by the AQA Programmer Team
+# developed using Python 3.5.1
+
 import random
 
 class QueueOfTiles():
@@ -28,7 +33,9 @@ class QueueOfTiles():
 
   def Add(self):
     if self._Rear < self._MaxSize - 1:
-      RandNo = random.randint(0, 25)
+      RandNo = random.randint(0, 26)
+      if RandNo == 26:
+        RandNo = -23
       self._Rear += 1
       self._Contents[self._Rear] = chr(65 + RandNo)
 
@@ -51,6 +58,7 @@ def CreateTileDictionary():
       TileDictionary[chr(65 + Count)] = 3
     else:
       TileDictionary[chr(65 + Count)] = 5
+  TileDictionary[42]=0
   return TileDictionary
     
 def DisplayTileValues(TileDictionary, AllowedWords):
@@ -71,7 +79,7 @@ def GetStartingHand(TileQueue, StartHandSize):
 def LoadAllowedWords():
   AllowedWords = []
   try:
-    WordsFile = open("chilwellwords.txt", "r")
+    WordsFile = open("aqawords.txt", "r")
     for Word in WordsFile:
       AllowedWords.append(Word.strip().upper())
     WordsFile.close()
@@ -82,11 +90,19 @@ def LoadAllowedWords():
 def CheckWordIsInTiles(Word, PlayerTiles):
   InTiles = True
   CopyOfTiles = PlayerTiles
+  Wild = 0
+  for a in CopyOfTiles:
+    if a == "*":
+      Wild += 1
   for Count in range(len(Word)):
     if Word[Count] in CopyOfTiles:
       CopyOfTiles = CopyOfTiles.replace(Word[Count], "", 1)
     else:
-      InTiles = False
+      if Wild > 0:
+        Wild -= 1
+        CopyOfTiles = CopyOfTiles.replace(Word[Count], "", 1)
+      else:
+        InTiles = False
   return InTiles 
 
 def CheckWordIsValid(Word, AllowedWords):
@@ -129,7 +145,10 @@ def GetScoreForWord(Word, TileDictionary):
 def UpdateAfterAllowedWord(Word, PlayerTiles, PlayerScore, PlayerTilesPlayed, TileDictionary, AllowedWords):
   PlayerTilesPlayed += len(Word)
   for Letter in Word:
-    PlayerTiles = PlayerTiles.replace(Letter, "", 1)
+    if Letter in PlayerTiles:
+      PlayerTiles = PlayerTiles.replace(Letter, "", 1)
+    else:
+      PlayerTiles = PlayerTiles.replace("*", "", 1)
   PlayerScore += GetScoreForWord(Word, TileDictionary)
   return PlayerTiles, PlayerScore, PlayerTilesPlayed
       
@@ -233,7 +252,7 @@ def PlayGame(AllowedWords, TileDictionary, RandomStart, StartHandSize, MaxHandSi
     PlayerOneTiles = GetStartingHand(TileQueue, StartHandSize)
     PlayerTwoTiles = GetStartingHand(TileQueue, StartHandSize)
   else:
-    PlayerOneTiles = "BTAHANDENONSARJ"
+    PlayerOneTiles = "ACKNOWLEDGEMENT"
     PlayerTwoTiles = "CELZXIOTNESMUAA"
   while PlayerOneTilesPlayed <= MaxTilesPlayed and PlayerTwoTilesPlayed <= MaxTilesPlayed and len(PlayerOneTiles) < MaxHandSize and len(PlayerTwoTiles) < MaxHandSize:
     PlayerOneTiles, PlayerOneTilesPlayed, PlayerOneScore, TileQueue = HaveTurn("Player One", PlayerOneTiles, PlayerOneTilesPlayed, PlayerOneScore, TileDictionary, TileQueue, AllowedWords, MaxHandSize, NoOfEndOfTurnTiles)
@@ -257,9 +276,9 @@ def DisplayMenu():
   print()
   
 def Main():
-  print("+++++++++++++++++++++++++++++++++++++++++++")
-  print("+ Welcome to the WORDS WITH CHILWELL game +")
-  print("+++++++++++++++++++++++++++++++++++++++++++")
+  print("++++++++++++++++++++++++++++++++++++++")
+  print("+ Welcome to the WORDS WITH AQA game +")
+  print("++++++++++++++++++++++++++++++++++++++")
   print()
   print()
   AllowedWords = LoadAllowedWords()
