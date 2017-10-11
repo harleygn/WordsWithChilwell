@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 
 class QueueOfTiles():
@@ -30,7 +31,36 @@ class QueueOfTiles():
     def Add(self):
         if self._Rear < self._MaxSize - 1:
             TileLibrary = CreateTileLibrary()
-            RandNo = random.randint(0, 26)
+            tile_frequency = [
+                0.08167,
+                0.01492,
+                0.02782,
+                0.04253,
+                0.12702,
+                0.02228,
+                0.02015,
+                0.06094,
+                0.06966,
+                0.00153,
+                0.00772,
+                0.04025,
+                0.02406,
+                0.06749,
+                0.07507,
+                0.01929,
+                0.00095,
+                0.05987,
+                0.06327,
+                0.09056,
+                0.02758,
+                0.00978,
+                0.02360,
+                0.00150,
+                0.01974,
+                0.00074,
+            ]
+            # generates 1 non-uniform random sample from probability list tile_frequency
+            RandNo = np.random.choice(len(tile_frequency), 1, tile_frequency)[0]
             self._Rear += 1
             self._Contents[self._Rear] = TileLibrary[RandNo]
 
@@ -156,10 +186,10 @@ def GetScoreForWord(Word, TileDictionary):
 def UpdateAfterAllowedWord(Word, PlayerTiles, PlayerScore, PlayerTilesPlayed, TileDictionary, AllowedWords):
     PlayerTilesPlayed += len(Word)
     for Letter in Word:
-        if PlayerTiles.find(Letter)>=0:
-          PlayerTiles = PlayerTiles.replace(Letter, "", 1)
+        if PlayerTiles.find(Letter) >= 0:
+            PlayerTiles = PlayerTiles.replace(Letter, "", 1)
         else:
-          PlayerTiles = PlayerTiles.replace("▊", "", 1)
+            PlayerTiles = PlayerTiles.replace("▊", "", 1)
     PlayerScore += GetScoreForWord(Word, TileDictionary)
     return PlayerTiles, PlayerScore, PlayerTilesPlayed
 
