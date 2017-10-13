@@ -1,4 +1,4 @@
-import numpy as np
+import random
 import letter_frequencies
 
 
@@ -32,7 +32,7 @@ class QueueOfTiles():
         if self._Rear < self._MaxSize - 1:
             TileLibrary = CreateTileLibrary()
             # generates 1 non-uniform random sample from probability list tile_frequency
-            RandNo = np.random.choice(len(letter_frequencies.tile_frequency), 1, letter_frequencies.tile_frequency)[0]
+            RandNo = random.choices(range(letter_frequencies.num_of_tiles), letter_frequencies.tile_frequency)[0]
             self._Rear += 1
             self._Contents[self._Rear] = TileLibrary[RandNo]
 

@@ -26,3 +26,4 @@ tile_frequency = [
                 0.01974,
                 0.00074,
             ]
+num_of_tiles = len(tile_frequency)
