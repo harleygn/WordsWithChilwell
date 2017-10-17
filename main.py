@@ -220,9 +220,9 @@ def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictio
             DisplayTilesInHand(PlayerTiles)
         elif Choice == "0":
             ValidChoice = True
-            TileQueue, PlayerTiles = FillHandWithTiles(TileQueue, PlayerTiles, MaxHandSize)
         else:
             ValidChoice = True
+            TileQueue, PlayerTiles = FillHandWithTiles(TileQueue, PlayerTiles, MaxHandSize)
             if len(Choice) == 0:
                 ValidWord = False
             else:
@@ -237,6 +237,8 @@ def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictio
                                                                                          PlayerScore, PlayerTilesPlayed,
                                                                                          TileDictionary, AllowedWords)
                     NewTileChoice = GetNewTileChoice()
+                else:
+                    ValidWord = False
             if not ValidWord:
                 print()
                 print("Not a valid attempt, you lose your turn.")
@@ -250,22 +252,54 @@ def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictio
     return PlayerTiles, PlayerTilesPlayed, PlayerScore, TileQueue
 
 
-def DisplayWinner(PlayerOneScore, PlayerTwoScore):
+def DisplayWinner(PlayerOneScore, PlayerTwoScore, PlayerNames):
     print()
     print("**** GAME OVER! ****")
     print()
-    print("Player One your score is", PlayerOneScore)
-    print("Player Two your score is", PlayerTwoScore)
+    print(PlayerNames[0] + " your score is", PlayerOneScore)
+    print(PlayerNames[1] + " your score is", PlayerTwoScore)
+    DealWithScores(PlayerNames, [PlayerOneScore, PlayerTwoScore])
     if PlayerOneScore > PlayerTwoScore:
-        print("Player One wins!")
+        print(PlayerNames[0] + " wins!")
     elif PlayerTwoScore > PlayerOneScore:
-        print("Player Two wins!")
+        print(PlayerNames[1] + " wins!")
     else:
         print("It is a draw!")
     print()
 
 
-def PlayGame(AllowedWords, TileDictionary, RandomStart, StartHandSize, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles):
+def DealWithScores(PlayerNames, PlayerScores):
+    WriteScores(ReadScores(PlayerNames, PlayerScores))
+
+def ReadScores(PlayerNames, PlayerScores):
+    temp = open("Scores.txt", "r").read().split("\n")#YOU NEED A .txt FILE NAMED "Scores" FOR THIS TO WORK
+
+    Scores = {}
+
+    for info in temp:
+        info = info.split(",")
+        if "" not in info:
+            Scores.update({info[0]:info})
+
+    for a in range(2):
+        try:
+            if PlayerScores[a] > int(Scores[PlayerNames[a]][1]):
+                print(PlayerNames[a], "got a new high score!")
+                Scores[PlayerNames[a]][1]=str(PlayerScores[a])
+            Scores[PlayerNames[a]][2] += "." + str(PlayerScores[a])
+        except:
+            Scores.update({PlayerNames[a]:[str(PlayerNames[a]), str(PlayerScores[a]), str(PlayerScores[a])]})
+    return Scores
+
+def WriteScores(Scores):
+    temp = open("Scores.txt", "w")
+    line = ""
+    for name in Scores:
+        temp.write(line + Scores[name][0] + "," + Scores[name][1] + "," + Scores[name][2])
+        line = "\n"
+    temp.close()
+
+def PlayGame(AllowedWords, TileDictionary, RandomStart, StartHandSize, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles, PlayerNames):
     PlayerOneScore = 50
     PlayerTwoScore = 50
     PlayerOneTilesPlayed = 0
@@ -294,7 +328,7 @@ def PlayGame(AllowedWords, TileDictionary, RandomStart, StartHandSize, MaxHandSi
                                                                                    NoOfEndOfTurnTiles)
     PlayerOneScore = UpdateScoreWithPenalty(PlayerOneScore, PlayerOneTiles, TileDictionary)
     PlayerTwoScore = UpdateScoreWithPenalty(PlayerTwoScore, PlayerTwoTiles, TileDictionary)
-    DisplayWinner(PlayerOneScore, PlayerTwoScore)
+    DisplayWinner(PlayerOneScore, PlayerTwoScore, PlayerNames)
 
 
 def DisplayMenu():
@@ -315,6 +349,7 @@ def Main():
     print("+++++++++++++++++++++++++++++++++++++++++++")
     print()
     print()
+    PlayerNames = [input("What is Player 1's name?"), input("What is Player 2's name?")]
     AllowedWords = LoadAllowedWords()
     TileDictionary = CreateTileDictionary()
     MaxHandSize = 20
@@ -322,13 +357,14 @@ def Main():
     NoOfEndOfTurnTiles = 3
     StartHandSize = 15
     Choice = ""
+    TimeAllowed = 15
     while Choice != "9":
         DisplayMenu()
         Choice = input("Enter your choice: ")
         if Choice == "1":
-            PlayGame(AllowedWords, TileDictionary, True, StartHandSize, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles)
+            PlayGame(AllowedWords, TileDictionary, True, StartHandSize, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles, PlayerNames)
         elif Choice == "2":
-            PlayGame(AllowedWords, TileDictionary, False, 15, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles)
+            PlayGame(AllowedWords, TileDictionary, False, 15, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles, PlayerNames)
 
 
 if __name__ == "__main__":
