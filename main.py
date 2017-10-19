@@ -205,8 +205,10 @@ def DisplayTilesInHand(PlayerTiles):
 
 def DisplayLeaderboard():
     ScoreList = LoadLeaderboard()
+    print()
     for Entry in ScoreList:
         print(Entry)
+    print()
     input("Press Enter to return to the main menu")
 
 
@@ -214,7 +216,7 @@ def LoadLeaderboard():
     ScoreList = []
     with open("scores.txt", "r") as Scores:
         for Entry in Scores:
-            ScoreList.append(Entry)
+            ScoreList.append(Entry.strip())
     return ScoreList
 
 
