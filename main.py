@@ -203,6 +203,21 @@ def DisplayTilesInHand(PlayerTiles):
     print("Your current hand:", PlayerTiles)
 
 
+def DisplayLeaderboard():
+    ScoreList = LoadLeaderboard()
+    for Entry in ScoreList:
+        print(Entry)
+    input("Press Enter to return to the main menu")
+
+
+def LoadLeaderboard():
+    ScoreList = []
+    with open("scores.txt", "r") as Scores:
+        for Entry in Scores:
+            ScoreList.append(Entry)
+    return ScoreList
+
+
 def GetPlayerName(PlayerNumber):
     PlayerName = input("Player" + " " + str(PlayerNumber) + " " + "enter your name: ")
     return PlayerName
@@ -210,7 +225,8 @@ def GetPlayerName(PlayerNumber):
 
 def SavePlayerScores(PlayerOneName, PlayerOneScore, PlayerTwoName, PlayerTwoScore):
     with open("scores.txt", "a") as scores:
-        scores.write(PlayerOneName + ", " + str(PlayerOneScore) + "\n" + PlayerTwoName + ", " + str(PlayerTwoScore))
+        scores.write(PlayerOneName + ": " + str(PlayerOneScore) + "\n"
+                     + PlayerTwoName + ": " + str(PlayerTwoScore) + "\n")
 
 
 def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictionary, TileQueue, AllowedWords,
@@ -318,6 +334,7 @@ def DisplayMenu():
     print()
     print("1. Play game with random start hand")
     print("2. Play game with training start hand")
+    print("3. Display leaderboard")
     print("9. Quit")
     print()
 
@@ -342,6 +359,8 @@ def Main():
             PlayGame(AllowedWords, TileDictionary, True, StartHandSize, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles)
         elif Choice == "2":
             PlayGame(AllowedWords, TileDictionary, False, 15, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles)
+        elif Choice == "3":
+            DisplayLeaderboard()
 
 
 if __name__ == "__main__":
