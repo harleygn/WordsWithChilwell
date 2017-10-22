@@ -207,29 +207,42 @@ def DisplayTilesInHand(PlayerTiles):
 
 def DisplayLeaderboard():
     ScoreList = LoadScores()
+    RowNum = 0
     print()
-    for Entry in range(11):
-        print(ScoreList[Entry][0] + " " + ScoreList[Entry][1])
+    print("--------------")
+    print("TOP 10 PLAYERS")
+    print("--------------")
+    print()
+    print("Name Score")
+    for Name, Score in ScoreList[0:11]:
+        if RowNum == 0:
+            RowNum += 1
+        else:
+            print(str(RowNum) + ".", Name, Score)
+            RowNum += 1
     print()
     input("Press Enter to return to the main menu")
 
 
 def LoadScores():
     with open("scores.csv") as ScoresCSV:
-        Scores = csv.reader(ScoresCSV, delimiter=",")
+        Scores = csv.reader(ScoresCSV)
         ScoreList = sorted(Scores, key=operator.itemgetter(1), reverse=True)
         return ScoreList
 
 
 def GetPlayerName(PlayerNumber):
+    print()
     PlayerName = input("Player" + " " + str(PlayerNumber) + " " + "enter your name: ")
     return PlayerName
 
 
 def SavePlayerScores(PlayerOneName, PlayerOneScore, PlayerTwoName, PlayerTwoScore):
-    with open("scores.csv", "a") as scores:
-        scores.write(PlayerOneName + ": " + str(PlayerOneScore) + "\n"
-                     + PlayerTwoName + ": " + str(PlayerTwoScore) + "\n")
+    with open("scores.csv", "a", newline="") as ScoresCSV:
+        FieldNames = ["Name", "Score"]
+        Scores = csv.DictWriter(ScoresCSV, fieldnames=FieldNames)
+        Scores.writerow({"Name": PlayerOneName, "Score": PlayerOneScore})
+        Scores.writerow({"Name": PlayerTwoName, "Score": PlayerTwoScore})
 
 
 def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictionary, TileQueue, AllowedWords,
