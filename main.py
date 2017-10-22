@@ -215,7 +215,7 @@ def DisplayLeaderboard():
     print("--------------")
     print()
     print("Name Score Date")
-    for Name, Score, Date in ScoreList[0:11]:
+    for Name, Score, Date in ScoreList:
         if RowNum == 0:
             RowNum += 1
         else:
@@ -233,8 +233,10 @@ def LoadScores():
 
 
 def GetPlayerName(PlayerNumber):
+    PlayerName = ""
     print()
-    PlayerName = input("Player" + " " + str(PlayerNumber) + " " + "enter your name: ")
+    while not 0 < len(PlayerName) <= 20:
+        PlayerName = input("Player" + " " + str(PlayerNumber) + " " + "enter your name: ")
     return PlayerName
 
 
