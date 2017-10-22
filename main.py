@@ -1,4 +1,5 @@
 import csv
+import time
 import random
 import operator
 import letter_frequencies
@@ -213,12 +214,12 @@ def DisplayLeaderboard():
     print("TOP 10 PLAYERS")
     print("--------------")
     print()
-    print("Name Score")
-    for Name, Score in ScoreList[0:11]:
+    print("Name Score Date")
+    for Name, Score, Date in ScoreList[0:11]:
         if RowNum == 0:
             RowNum += 1
         else:
-            print(str(RowNum) + ".", Name, Score)
+            print(str(RowNum) + ".", Name, Score, Date)
             RowNum += 1
     print()
     input("Press Enter to return to the main menu")
@@ -228,7 +229,7 @@ def LoadScores():
     with open("scores.csv") as ScoresCSV:
         Scores = csv.reader(ScoresCSV)
         ScoreList = sorted(Scores, key=operator.itemgetter(1), reverse=True)
-        return ScoreList
+        return ScoreList[:11]
 
 
 def GetPlayerName(PlayerNumber):
@@ -239,10 +240,10 @@ def GetPlayerName(PlayerNumber):
 
 def SavePlayerScores(PlayerOneName, PlayerOneScore, PlayerTwoName, PlayerTwoScore):
     with open("scores.csv", "a", newline="") as ScoresCSV:
-        FieldNames = ["Name", "Score"]
+        FieldNames = ["Name", "Score", "Date"]
         Scores = csv.DictWriter(ScoresCSV, fieldnames=FieldNames)
-        Scores.writerow({"Name": PlayerOneName, "Score": PlayerOneScore})
-        Scores.writerow({"Name": PlayerTwoName, "Score": PlayerTwoScore})
+        Scores.writerow({"Name": PlayerOneName, "Score": PlayerOneScore, "Date": time.strftime("%d/%m/%Y")})
+        Scores.writerow({"Name": PlayerTwoName, "Score": PlayerTwoScore, "Date": time.strftime("%d/%m/%Y")})
 
 
 def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictionary, TileQueue, AllowedWords,
