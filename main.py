@@ -1,4 +1,6 @@
+import csv
 import random
+import operator
 import letter_frequencies
 
 
@@ -204,20 +206,19 @@ def DisplayTilesInHand(PlayerTiles):
 
 
 def DisplayLeaderboard():
-    ScoreList = LoadLeaderboard()
+    ScoreList = LoadScores()
     print()
-    for Entry in ScoreList:
-        print(Entry)
+    for Entry in range(11):
+        print(ScoreList[Entry][0] + " " + ScoreList[Entry][1])
     print()
     input("Press Enter to return to the main menu")
 
 
-def LoadLeaderboard():
-    ScoreList = []
-    with open("scores.txt", "r") as Scores:
-        for Entry in Scores:
-            ScoreList.append(Entry.strip())
-    return ScoreList
+def LoadScores():
+    with open("scores.csv") as ScoresCSV:
+        Scores = csv.reader(ScoresCSV, delimiter=",")
+        ScoreList = sorted(Scores, key=operator.itemgetter(1), reverse=True)
+        return ScoreList
 
 
 def GetPlayerName(PlayerNumber):
@@ -226,7 +227,7 @@ def GetPlayerName(PlayerNumber):
 
 
 def SavePlayerScores(PlayerOneName, PlayerOneScore, PlayerTwoName, PlayerTwoScore):
-    with open("scores.txt", "a") as scores:
+    with open("scores.csv", "a") as scores:
         scores.write(PlayerOneName + ": " + str(PlayerOneScore) + "\n"
                      + PlayerTwoName + ": " + str(PlayerTwoScore) + "\n")
 
