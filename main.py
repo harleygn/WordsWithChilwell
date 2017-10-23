@@ -214,7 +214,7 @@ def DisplayLeaderboard():
     print("TOP 10 PLAYERS")
     print("--------------")
     print()
-    print("Name Score Date")
+    print("Pos Name Score Date")
     for Name, Score, Date in ScoreList:
         if RowNum == 0:
             RowNum += 1
