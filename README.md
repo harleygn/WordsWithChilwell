@@ -6,35 +6,7 @@ Each player starts with 15 randomly-selected tiles. Each
 tile represents a single letter; each letter has a points value as shown in Figure 1. The tiles that a
 player has are called their "hand". Each player starts with a score of 50.
 
-| Letter  | Points letter is worth |
-| :---: | :---: |
-| A  | 1  |
-| B  | 2  |
-| C  | 2  |
-| D  | 2  |
-| E  | 1  |
-| F  | 3  |
-| G  | 2  |
-| H  | 3  |
-| I  | 1  |
-| J  | 5  |
-| K  | 3  |
-| L  | 2  |
-| M  | 2  |
-| N  | 1  |
-| O  | 1  |
-| P  | 2  |
-| Q  | 5  |
-| R  | 1  |
-| S  | 1  |
-| T  | 1  |
-| U  | 2  |
-| V  | 3  |
-| W  | 3  |
-| X  | 5  |
-| Y  | 3  |
-| Z  | 5  |
-| ▊  | 0  |
+![Alt text](/tile_points.png?raw=true "Values of each tile")
 
 Players take turns to spell a two or more letter word using only the letter tiles in their hand. Each tile
 may only be used once in the word. If on their turn they spell a valid word then the tiles used in that

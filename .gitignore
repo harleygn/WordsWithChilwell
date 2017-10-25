@@ -102,3 +102,6 @@ ENV/
 
 #PyCharm
 .idea
+
+#Screenshots
+tile_points.png
