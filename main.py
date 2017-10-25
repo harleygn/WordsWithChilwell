@@ -209,6 +209,7 @@ def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictio
     print(PlayerName, "it is your turn.")
     DisplayTilesInHand(PlayerTiles)
     NewTileChoice = "2"
+    min_word_length = 3
     ValidChoice = False
     while not ValidChoice:
         Choice = GetChoice()
@@ -223,7 +224,7 @@ def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictio
             TileQueue, PlayerTiles = FillHandWithTiles(TileQueue, PlayerTiles, MaxHandSize)
         else:
             ValidChoice = True
-            if len(Choice) == 0:
+            if len(Choice) < min_word_length:
                 ValidWord = False
             else:
                 ValidWord = CheckWordIsInTiles(Choice, PlayerTiles)
