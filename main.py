@@ -231,7 +231,7 @@ def LoadScores():
 
 def DisplayLeaderboard():
     ScoreList = LoadScores()
-    if ScoreList is None:
+    if not ScoreList:
         print("Leaderboard is empty")
     else:
         RowNum = 1
