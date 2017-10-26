@@ -206,30 +206,46 @@ def DisplayTilesInHand(PlayerTiles):
     print("Your current hand:", PlayerTiles)
 
 
+def CheckScoresheetExists():
+    try:
+        open("scores.csv", "r")
+        pass
+    except FileNotFoundError:
+        with open("scores.csv", "a", newline="") as Scoresheet:
+            FieldNames = ["Name", "Score", "Date"]
+            Scoresheet = csv.DictWriter(Scoresheet, fieldnames=FieldNames)
+            Scoresheet.writeheader()
+
+
+def LoadScores():
+    CheckScoresheetExists()
+    with open("scores.csv") as ScoresCSV:
+        Scores = csv.reader(ScoresCSV)
+        next(Scores, None)
+        try:
+            ScoreList = sorted(Scores, key=operator.itemgetter(1), reverse=True)
+            return ScoreList[:11]
+        except IndexError:
+            return None
+
+
 def DisplayLeaderboard():
     ScoreList = LoadScores()
-    RowNum = 0
-    print()
-    print("--------------")
-    print("TOP 10 PLAYERS")
-    print("--------------")
-    print()
-    print("Pos Name Score Date")
-    for Name, Score, Date in ScoreList:
-        if RowNum == 0:
-            RowNum += 1
-        else:
+    if ScoreList is None:
+        print("Leaderboard is empty")
+    else:
+        RowNum = 1
+        print()
+        print("--------------")
+        print("TOP 10 PLAYERS")
+        print("--------------")
+        print()
+        print("Pos Name Score Date")
+        for Name, Score, Date in ScoreList:
             print(str(RowNum) + ".", Name, Score, Date)
             RowNum += 1
     print()
     input("Press Enter to return to the main menu")
-
-
-def LoadScores():
-    with open("scores.csv") as ScoresCSV:
-        Scores = csv.reader(ScoresCSV)
-        ScoreList = sorted(Scores, key=operator.itemgetter(1), reverse=True)
-        return ScoreList[:11]
 
 
 def GetPlayerName(PlayerNumber):
@@ -241,6 +257,7 @@ def GetPlayerName(PlayerNumber):
 
 
 def SavePlayerScores(PlayerOneName, PlayerOneScore, PlayerTwoName, PlayerTwoScore):
+    CheckScoresheetExists()
     with open("scores.csv", "a", newline="") as ScoresCSV:
         FieldNames = ["Name", "Score", "Date"]
         Scores = csv.DictWriter(ScoresCSV, fieldnames=FieldNames)
