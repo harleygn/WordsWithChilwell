@@ -1,4 +1,7 @@
+import csv
+import time
 import random
+import operator
 import letter_frequencies
 
 
@@ -203,6 +206,66 @@ def DisplayTilesInHand(PlayerTiles):
     print("Your current hand:", PlayerTiles)
 
 
+def CheckScoresheetExists():
+    try:
+        open("scores.csv", "r")
+        pass
+    except FileNotFoundError:
+        with open("scores.csv", "a", newline="") as Scoresheet:
+            FieldNames = ["Name", "Score", "Date"]
+            Scoresheet = csv.DictWriter(Scoresheet, fieldnames=FieldNames)
+            Scoresheet.writeheader()
+
+
+def LoadScores():
+    CheckScoresheetExists()
+    with open("scores.csv") as ScoresCSV:
+        Scores = csv.reader(ScoresCSV)
+        next(Scores, None)
+        try:
+            ScoreList = sorted(Scores, key=operator.itemgetter(1), reverse=True)
+            return ScoreList[:11]
+        except IndexError:
+            return None
+
+
+def DisplayLeaderboard():
+    ScoreList = LoadScores()
+    if not ScoreList:
+        print()
+        print("Leaderboard is empty")
+    else:
+        RowNum = 1
+        print()
+        print("--------------")
+        print("TOP 10 PLAYERS")
+        print("--------------")
+        print()
+        print("Pos Name Score Date")
+        for Name, Score, Date in ScoreList:
+            print(str(RowNum) + ".", Name, Score, Date)
+            RowNum += 1
+    print()
+    input("Press Enter to return to the main menu")
+
+
+def GetPlayerName(PlayerNumber):
+    PlayerName = ""
+    print()
+    while 0 == len(PlayerName) or len(PlayerName) >= 20:
+        PlayerName = input("Player" + " " + str(PlayerNumber) + " " + "enter your name: ")
+    return PlayerName
+
+
+def SavePlayerScores(PlayerOneName, PlayerOneScore, PlayerTwoName, PlayerTwoScore):
+    CheckScoresheetExists()
+    with open("scores.csv", "a", newline="") as ScoresCSV:
+        FieldNames = ["Name", "Score", "Date"]
+        Scores = csv.DictWriter(ScoresCSV, fieldnames=FieldNames)
+        Scores.writerow({"Name": PlayerOneName, "Score": PlayerOneScore, "Date": time.strftime("%d/%m/%Y")})
+        Scores.writerow({"Name": PlayerTwoName, "Score": PlayerTwoScore, "Date": time.strftime("%d/%m/%Y")})
+
+
 def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictionary, TileQueue, AllowedWords,
              MaxHandSize, NoOfEndOfTurnTiles):
     print()
@@ -251,22 +314,24 @@ def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictio
     return PlayerTiles, PlayerTilesPlayed, PlayerScore, TileQueue
 
 
-def DisplayWinner(PlayerOneScore, PlayerTwoScore):
+def DisplayWinner(PlayerOneScore, PlayerTwoScore, PlayerOneName, PlayerTwoName):
     print()
     print("**** GAME OVER! ****")
     print()
-    print("Player One your score is", PlayerOneScore)
-    print("Player Two your score is", PlayerTwoScore)
+    print(PlayerOneName, "your score is", PlayerOneScore)
+    print(PlayerTwoName, "your score is", PlayerTwoScore)
     if PlayerOneScore > PlayerTwoScore:
-        print("Player One wins!")
+        print(PlayerOneName, "wins!")
     elif PlayerTwoScore > PlayerOneScore:
-        print("Player Two wins!")
+        print(PlayerTwoName, "wins!")
     else:
         print("It is a draw!")
     print()
 
 
 def PlayGame(AllowedWords, TileDictionary, RandomStart, StartHandSize, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles):
+    PlayerOneName = GetPlayerName(1)
+    PlayerTwoName = GetPlayerName(2)
     PlayerOneScore = 50
     PlayerTwoScore = 50
     PlayerOneTilesPlayed = 0
@@ -280,7 +345,7 @@ def PlayGame(AllowedWords, TileDictionary, RandomStart, StartHandSize, MaxHandSi
         PlayerTwoTiles = "CELZXIOTNESMUAA"
     while PlayerOneTilesPlayed <= MaxTilesPlayed and PlayerTwoTilesPlayed <= MaxTilesPlayed and len(
             PlayerOneTiles) < MaxHandSize and len(PlayerTwoTiles) < MaxHandSize:
-        PlayerOneTiles, PlayerOneTilesPlayed, PlayerOneScore, TileQueue = HaveTurn("Player One", PlayerOneTiles,
+        PlayerOneTiles, PlayerOneTilesPlayed, PlayerOneScore, TileQueue = HaveTurn(PlayerOneName, PlayerOneTiles,
                                                                                    PlayerOneTilesPlayed, PlayerOneScore,
                                                                                    TileDictionary, TileQueue,
                                                                                    AllowedWords, MaxHandSize,
@@ -288,14 +353,15 @@ def PlayGame(AllowedWords, TileDictionary, RandomStart, StartHandSize, MaxHandSi
         print()
         input("Press Enter to continue")
         print()
-        PlayerTwoTiles, PlayerTwoTilesPlayed, PlayerTwoScore, TileQueue = HaveTurn("Player Two", PlayerTwoTiles,
+        PlayerTwoTiles, PlayerTwoTilesPlayed, PlayerTwoScore, TileQueue = HaveTurn(PlayerTwoName, PlayerTwoTiles,
                                                                                    PlayerTwoTilesPlayed, PlayerTwoScore,
                                                                                    TileDictionary, TileQueue,
                                                                                    AllowedWords, MaxHandSize,
                                                                                    NoOfEndOfTurnTiles)
     PlayerOneScore = UpdateScoreWithPenalty(PlayerOneScore, PlayerOneTiles, TileDictionary)
     PlayerTwoScore = UpdateScoreWithPenalty(PlayerTwoScore, PlayerTwoTiles, TileDictionary)
-    DisplayWinner(PlayerOneScore, PlayerTwoScore)
+    DisplayWinner(PlayerOneScore, PlayerTwoScore, PlayerOneName, PlayerTwoName)
+    SavePlayerScores(PlayerOneName, PlayerOneScore, PlayerTwoName, PlayerTwoScore)
 
 
 def DisplayMenu():
@@ -306,6 +372,7 @@ def DisplayMenu():
     print()
     print("1. Play game with random start hand")
     print("2. Play game with training start hand")
+    print("3. Display leaderboard")
     print("9. Quit")
     print()
 
@@ -330,6 +397,8 @@ def Main():
             PlayGame(AllowedWords, TileDictionary, True, StartHandSize, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles)
         elif Choice == "2":
             PlayGame(AllowedWords, TileDictionary, False, 15, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles)
+        elif Choice == "3":
+            DisplayLeaderboard()
 
 
 if __name__ == "__main__":
