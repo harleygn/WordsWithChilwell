@@ -232,6 +232,7 @@ def LoadScores():
 def DisplayLeaderboard():
     ScoreList = LoadScores()
     if not ScoreList:
+        print()
         print("Leaderboard is empty")
     else:
         RowNum = 1
@@ -251,7 +252,7 @@ def DisplayLeaderboard():
 def GetPlayerName(PlayerNumber):
     PlayerName = ""
     print()
-    while not 0 < len(PlayerName) <= 20:
+    while 0 == len(PlayerName) or len(PlayerName) >= 20:
         PlayerName = input("Player" + " " + str(PlayerNumber) + " " + "enter your name: ")
     return PlayerName
 
