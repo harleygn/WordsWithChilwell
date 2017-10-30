@@ -182,6 +182,7 @@ def GetChoice():
     print("     press 1 to display the letter values OR")
     print("     press 4 to view the tile queue OR")
     print("     press 7 to view your tiles again OR")
+    print("     press 9 to skip your turn OR")
     print("     press 0 to fill hand and stop the game.")
     Choice = input(">")
     print()
