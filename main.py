@@ -1,8 +1,4 @@
-import csv
-import time
 import random
-import operator
-import letter_frequencies
 
 
 class QueueOfTiles():
@@ -33,14 +29,12 @@ class QueueOfTiles():
 
     def Add(self):
         if self._Rear < self._MaxSize - 1:
-            TileLibrary = CreateTileLibrary()
-            # generates 1 non-uniform random sample from probability list tile_frequency
-            RandNo = random.choices(range(letter_frequencies.num_of_tiles), letter_frequencies.tile_frequency)[0]
+            RandNo = random.randint(0, 25)
             self._Rear += 1
-            self._Contents[self._Rear] = TileLibrary[RandNo]
+            self._Contents[self._Rear] = chr(65 + RandNo)
 
     def Show(self):
-        if self._Rear != - 1:
+        if self._Rear != -1:
             print()
             print("The contents of the queue are: ", end="")
             for Item in self._Contents:
@@ -48,28 +42,17 @@ class QueueOfTiles():
             print()
 
 
-def CreateTileLibrary():
-    TileLibrary = []
-    for Count in range(26):
-        TileLibrary.append(chr(65 + Count))
-    TileLibrary.append(chr(9610))
-    return TileLibrary
-
-
 def CreateTileDictionary():
-    TileLibrary = CreateTileLibrary()
     TileDictionary = dict()
-    for Count in range(27):
+    for Count in range(26):
         if Count in [0, 4, 8, 13, 14, 17, 18, 19]:
-            TileDictionary[TileLibrary[Count]] = 1
+            TileDictionary[chr(65 + Count)] = 1
         elif Count in [1, 2, 3, 6, 11, 12, 15, 20]:
-            TileDictionary[TileLibrary[Count]] = 2
+            TileDictionary[chr(65 + Count)] = 2
         elif Count in [5, 7, 10, 21, 22, 24]:
-            TileDictionary[TileLibrary[Count]] = 3
-        elif Count == 26:
-            TileDictionary[TileLibrary[Count]] = 0
+            TileDictionary[chr(65 + Count)] = 3
         else:
-            TileDictionary[TileLibrary[Count]] = 5
+            TileDictionary[chr(65 + Count)] = 5
     return TileDictionary
 
 
@@ -103,18 +86,14 @@ def LoadAllowedWords():
 
 
 def CheckWordIsInTiles(Word, PlayerTiles):
-    MissingTiles = 0
+    InTiles = True
     CopyOfTiles = PlayerTiles
     for Count in range(len(Word)):
         if Word[Count] in CopyOfTiles:
             CopyOfTiles = CopyOfTiles.replace(Word[Count], "", 1)
         else:
-            MissingTiles += 1
-    WildcardNumber = 0
-    for char in CopyOfTiles:
-        if char == "▊":
-            WildcardNumber += 1
-    return (WildcardNumber >= MissingTiles)
+            InTiles = False
+    return InTiles
 
 
 def CheckWordIsValid(Word, AllowedWords):
@@ -161,10 +140,7 @@ def GetScoreForWord(Word, TileDictionary):
 def UpdateAfterAllowedWord(Word, PlayerTiles, PlayerScore, PlayerTilesPlayed, TileDictionary, AllowedWords):
     PlayerTilesPlayed += len(Word)
     for Letter in Word:
-        if PlayerTiles.find(Letter) >= 0:
-            PlayerTiles = PlayerTiles.replace(Letter, "", 1)
-        else:
-            PlayerTiles = PlayerTiles.replace("▊", "", 1)
+        PlayerTiles = PlayerTiles.replace(Letter, "", 1)
     PlayerScore += GetScoreForWord(Word, TileDictionary)
     return PlayerTiles, PlayerScore, PlayerTilesPlayed
 
@@ -206,64 +182,11 @@ def DisplayTilesInHand(PlayerTiles):
     print("Your current hand:", PlayerTiles)
 
 
-def CheckScoresheetExists():
-    try:
-        open("scores.csv", "r")
-        pass
-    except FileNotFoundError:
-        with open("scores.csv", "a", newline="") as Scoresheet:
-            FieldNames = ["Name", "Score", "Date"]
-            Scoresheet = csv.DictWriter(Scoresheet, fieldnames=FieldNames)
-            Scoresheet.writeheader()
-
-
-def LoadScores():
-    CheckScoresheetExists()
-    with open("scores.csv") as ScoresCSV:
-        Scores = csv.reader(ScoresCSV)
-        next(Scores, None)
-        try:
-            ScoreList = sorted(Scores, key=operator.itemgetter(1), reverse=True)
-            return ScoreList[:11]
-        except IndexError:
-            return None
-
-
-def DisplayLeaderboard():
-    ScoreList = LoadScores()
-    if not ScoreList:
-        print()
-        print("Leaderboard is empty")
-    else:
-        RowNum = 1
-        print()
-        print("--------------")
-        print("TOP 10 PLAYERS")
-        print("--------------")
-        print()
-        print("Pos Name Score Date")
-        for Name, Score, Date in ScoreList:
-            print(str(RowNum) + ".", Name, Score, Date)
-            RowNum += 1
-    print()
-    input("Press Enter to return to the main menu")
-
-
-def GetPlayerName(PlayerNumber):
-    PlayerName = ""
-    print()
-    while 0 == len(PlayerName) or len(PlayerName) >= 20:
-        PlayerName = input("Player" + " " + str(PlayerNumber) + " " + "enter your name: ")
-    return PlayerName
-
-
-def SavePlayerScores(PlayerOneName, PlayerOneScore, PlayerTwoName, PlayerTwoScore):
-    CheckScoresheetExists()
-    with open("scores.csv", "a", newline="") as ScoresCSV:
-        FieldNames = ["Name", "Score", "Date"]
-        Scores = csv.DictWriter(ScoresCSV, fieldnames=FieldNames)
-        Scores.writerow({"Name": PlayerOneName, "Score": PlayerOneScore, "Date": time.strftime("%d/%m/%Y")})
-        Scores.writerow({"Name": PlayerTwoName, "Score": PlayerTwoScore, "Date": time.strftime("%d/%m/%Y")})
+player = 0
+topScoreP1 = 0
+topScoreP2 = 0
+topWordP1 = "null"
+topWordP2 = "null"
 
 
 def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictionary, TileQueue, AllowedWords,
@@ -272,7 +195,6 @@ def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictio
     print(PlayerName, "it is your turn.")
     DisplayTilesInHand(PlayerTiles)
     NewTileChoice = "2"
-    min_word_length = 3
     ValidChoice = False
     while not ValidChoice:
         Choice = GetChoice()
@@ -287,13 +209,27 @@ def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictio
             TileQueue, PlayerTiles = FillHandWithTiles(TileQueue, PlayerTiles, MaxHandSize)
         else:
             ValidChoice = True
-            if len(Choice) < min_word_length:
+            if len(Choice) == 0:
                 ValidWord = False
             else:
                 ValidWord = CheckWordIsInTiles(Choice, PlayerTiles)
             if ValidWord:
                 ValidWord = CheckWordIsValid(Choice, AllowedWords)
                 if ValidWord:
+                    global player
+                    if player % 2 == 0:
+                        player += 1
+                        global topScoreP1, topWordP1
+                        if PlayerScore > topScoreP1:
+                            topScoreP1 = PlayerScore
+                            topWordP1 = Choice
+                    else:
+                        global topScoreP2, topWordP2
+                        player += 1
+                        if PlayerScore > topScoreP2:
+                            topScoreP2 = PlayerScore
+                            topWordP2 = Choice
+
                     print()
                     print("Valid word")
                     print()
@@ -311,27 +247,28 @@ def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictio
             print("Your word was:", Choice)
             print("Your new score is:", PlayerScore)
             print("You have played", PlayerTilesPlayed, "tiles so far in this game.")
-    return PlayerTiles, PlayerTilesPlayed, PlayerScore, TileQueue
+    return PlayerTiles, PlayerTilesPlayed, PlayerScore, TileQueue,
 
 
-def DisplayWinner(PlayerOneScore, PlayerTwoScore, PlayerOneName, PlayerTwoName):
+def DisplayWinner(PlayerOneScore, PlayerTwoScore):
+    global topWordP2, topWordP1
     print()
     print("**** GAME OVER! ****")
     print()
-    print(PlayerOneName, "your score is", PlayerOneScore)
-    print(PlayerTwoName, "your score is", PlayerTwoScore)
+    print("Player One your score is", PlayerOneScore)
+    print("Player One your top word is", topWordP1)
+    print("Player Two your score is", PlayerTwoScore)
+    print("Player two your top word is", topWordP2)
     if PlayerOneScore > PlayerTwoScore:
-        print(PlayerOneName, "wins!")
+        print("Player One wins!")
     elif PlayerTwoScore > PlayerOneScore:
-        print(PlayerTwoName, "wins!")
+        print("Player Two wins!")
     else:
         print("It is a draw!")
     print()
 
 
 def PlayGame(AllowedWords, TileDictionary, RandomStart, StartHandSize, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles):
-    PlayerOneName = GetPlayerName(1)
-    PlayerTwoName = GetPlayerName(2)
     PlayerOneScore = 50
     PlayerTwoScore = 50
     PlayerOneTilesPlayed = 0
@@ -345,7 +282,7 @@ def PlayGame(AllowedWords, TileDictionary, RandomStart, StartHandSize, MaxHandSi
         PlayerTwoTiles = "CELZXIOTNESMUAA"
     while PlayerOneTilesPlayed <= MaxTilesPlayed and PlayerTwoTilesPlayed <= MaxTilesPlayed and len(
             PlayerOneTiles) < MaxHandSize and len(PlayerTwoTiles) < MaxHandSize:
-        PlayerOneTiles, PlayerOneTilesPlayed, PlayerOneScore, TileQueue = HaveTurn(PlayerOneName, PlayerOneTiles,
+        PlayerOneTiles, PlayerOneTilesPlayed, PlayerOneScore, TileQueue = HaveTurn("Player One", PlayerOneTiles,
                                                                                    PlayerOneTilesPlayed, PlayerOneScore,
                                                                                    TileDictionary, TileQueue,
                                                                                    AllowedWords, MaxHandSize,
@@ -353,15 +290,14 @@ def PlayGame(AllowedWords, TileDictionary, RandomStart, StartHandSize, MaxHandSi
         print()
         input("Press Enter to continue")
         print()
-        PlayerTwoTiles, PlayerTwoTilesPlayed, PlayerTwoScore, TileQueue = HaveTurn(PlayerTwoName, PlayerTwoTiles,
+        PlayerTwoTiles, PlayerTwoTilesPlayed, PlayerTwoScore, TileQueue = HaveTurn("Player Two", PlayerTwoTiles,
                                                                                    PlayerTwoTilesPlayed, PlayerTwoScore,
                                                                                    TileDictionary, TileQueue,
                                                                                    AllowedWords, MaxHandSize,
                                                                                    NoOfEndOfTurnTiles)
     PlayerOneScore = UpdateScoreWithPenalty(PlayerOneScore, PlayerOneTiles, TileDictionary)
     PlayerTwoScore = UpdateScoreWithPenalty(PlayerTwoScore, PlayerTwoTiles, TileDictionary)
-    DisplayWinner(PlayerOneScore, PlayerTwoScore, PlayerOneName, PlayerTwoName)
-    SavePlayerScores(PlayerOneName, PlayerOneScore, PlayerTwoName, PlayerTwoScore)
+    DisplayWinner(PlayerOneScore, PlayerTwoScore)
 
 
 def DisplayMenu():
@@ -372,15 +308,14 @@ def DisplayMenu():
     print()
     print("1. Play game with random start hand")
     print("2. Play game with training start hand")
-    print("3. Display leaderboard")
     print("9. Quit")
     print()
 
 
 def Main():
-    print("+++++++++++++++++++++++++++++++++++++++++++")
-    print("+ Welcome to the WORDS WITH CHILWELL game +")
-    print("+++++++++++++++++++++++++++++++++++++++++++")
+    print("++++++++++++++++++++++++++++++++++++++")
+    print("+ Welcome to the WORDS WITH AQA game +")
+    print("++++++++++++++++++++++++++++++++++++++")
     print()
     print()
     AllowedWords = LoadAllowedWords()
@@ -397,8 +332,6 @@ def Main():
             PlayGame(AllowedWords, TileDictionary, True, StartHandSize, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles)
         elif Choice == "2":
             PlayGame(AllowedWords, TileDictionary, False, 15, MaxHandSize, MaxTilesPlayed, NoOfEndOfTurnTiles)
-        elif Choice == "3":
-            DisplayLeaderboard()
 
 
 if __name__ == "__main__":
