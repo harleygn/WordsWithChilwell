@@ -105,9 +105,10 @@ def LoadAllowedWords():
 def CheckWordIsInTiles(Word, PlayerTiles):
     MissingTiles = 0
     CopyOfTiles = PlayerTiles
-    for Count in range(len(Word)):
-        if Word[Count] in CopyOfTiles:
-            CopyOfTiles = CopyOfTiles.replace(Word[Count], "", 1)
+    _Word = Word.replace(" ","")
+    for Count in range(len(_Word)):
+        if _Word[Count] in CopyOfTiles:
+            CopyOfTiles = CopyOfTiles.replace(_Word[Count], "", 1)
         else:
             MissingTiles += 1
     WildcardNumber = 0
@@ -120,10 +121,12 @@ def CheckWordIsInTiles(Word, PlayerTiles):
 def CheckWordIsValid(Word, AllowedWords):
     ValidWord = False
     Count = 0
+    _Words = Word.split()
     while Count < len(AllowedWords) and not ValidWord:
-        if AllowedWords[Count] == Word:
-            ValidWord = True
-        Count += 1
+        for Word in _Words:
+            if AllowedWords[Count] == Word:
+                ValidWord = True
+            Count += 1
     return ValidWord
 
 
@@ -149,12 +152,14 @@ def FillHandWithTiles(TileQueue, PlayerTiles, MaxHandSize):
 
 def GetScoreForWord(Word, TileDictionary):
     Score = 0
-    for Count in range(len(Word)):
-        Score += TileDictionary[Word[Count]]
-    if len(Word) > 7:
-        Score += 20
-    elif len(Word) > 5:
-        Score += 5
+    _Word = Word.split()
+    for i in _Word:
+        for Count in range(len(i)):
+            Score += TileDictionary[i[Count]]
+        if len(i) > 7:
+            Score += 20
+        elif len(i) > 5:
+            Score += 5
     return Score
 
 
