@@ -148,14 +148,36 @@ def FillHandWithTiles(TileQueue, PlayerTiles, MaxHandSize):
 
 
 def GetScoreForWord(Word, TileDictionary):
-    Score = 0
-    for Count in range(len(Word)):
-        Score += TileDictionary[Word[Count]]
-    if len(Word) > 7:
-        Score += 20
-    elif len(Word) > 5:
-        Score += 5
-    return Score
+  done1 = 0
+  done2 = 0
+  Score = 0
+  NewWord = [] 
+  for Count in range (len(Word)):
+    Score += TileDictionary[Word[Count]]
+  if len(Word) > 7:
+    Score += 20
+  elif len(Word) > 5:
+    Score += 5
+  for Letters in range(len(Word)):
+      NewWord.append(Word[Letters])
+  for Letter in range(len(NewWord)):
+        if done1 == 1:
+            break
+        if NewWord[Letter] == NewWord[Letter + 1]:
+            letter1 = Letter 
+            letter2 = Letter 
+            removekey(NewWord, letter1, letter2)
+            for DiffLetters in range(len(NewWord)):
+                if NewWord[DiffLetters] == NewWord[DiffLetters + 1]:
+                    Score += 20
+                    done1 = 1
+                    break 
+  return Score
+
+def removekey(NewWord, letter1, letter2):
+    del NewWord[letter1]
+    del NewWord[letter2]
+    return NewWord
 
 
 def UpdateAfterAllowedWord(Word, PlayerTiles, PlayerScore, PlayerTilesPlayed, TileDictionary, AllowedWords):
