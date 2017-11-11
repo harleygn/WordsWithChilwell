@@ -163,12 +163,16 @@ def GetScoreForWord(Word, TileDictionary):
   for Letter in range(len(NewWord)):
         if done1 == 1:
             break
-        if NewWord[Letter] == NewWord[Letter + 1]:
+        elif Letter == len(NewWord) - 1:
+          break
+        elif NewWord[Letter] == NewWord[Letter + 1]:
             letter1 = Letter 
             letter2 = Letter 
             removekey(NewWord, letter1, letter2)
             for DiffLetters in range(len(NewWord)):
-                if NewWord[DiffLetters] == NewWord[DiffLetters + 1]:
+                if DiffLetters == len(NewWord) - 1:
+                  break
+                elif NewWord[DiffLetters] == NewWord[DiffLetters + 1]:
                     Score += 20
                     done1 = 1
                     break 
@@ -178,6 +182,7 @@ def removekey(NewWord, letter1, letter2):
     del NewWord[letter1]
     del NewWord[letter2]
     return NewWord
+
 
 
 def UpdateAfterAllowedWord(Word, PlayerTiles, PlayerScore, PlayerTilesPlayed, TileDictionary, AllowedWords):
