@@ -158,24 +158,23 @@ def GetScoreForWord(Word, TileDictionary):
     Score += 20
   elif len(Word) > 5:
     Score += 5
-  for Letters in range(len(Word)):
+   for Letters in range(len(Word)):
       NewWord.append(Word[Letters])
-  for Letter in range(len(NewWord)):
-        if done1 == 1:
-            break
-        elif Letter == len(NewWord) - 1:
+  while IsDone == False:
+    for Letter in range(len(NewWord)):
+      if Letter == len(NewWord) - 1:
           break
-        elif NewWord[Letter] == NewWord[Letter + 1]:
-            letter1 = Letter 
-            letter2 = Letter 
-            removekey(NewWord, letter1, letter2)
-            for DiffLetters in range(len(NewWord)):
-                if DiffLetters == len(NewWord) - 1:
-                  break
-                elif NewWord[DiffLetters] == NewWord[DiffLetters + 1]:
-                    Score += 20
-                    done1 = 1
-                    break 
+      elif NewWord[Letter] == NewWord[Letter + 1]:
+        letter1 = Letter
+        letter2 = Letter
+        removekey(NewWord, letter1, letter2)
+      for DiffLetters in range(len(NewWord)):
+        if DiffLetters == len(NewWord) - 1:
+          break
+        elif NewWord[DiffLetters] == NewWord[DiffLetters + 1]:
+          Score += 20
+          IsDone = True
+          break
   return Score
 
 def removekey(NewWord, letter1, letter2):
