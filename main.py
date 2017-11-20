@@ -102,7 +102,8 @@ def LoadAllowedWords():
         print("MISSING DICTIONARY FILE 'chilwellwords.txt'")
         print("-------------------------------------------")
         print("The game will not function properly without")
-        print("It is recommend that you replace this file")
+        print("a dictioanry to validate words.")
+        print("It is essential that you replace this file.")
         print("###########################################")
     return AllowedWords
 
