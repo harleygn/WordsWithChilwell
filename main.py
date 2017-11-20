@@ -98,7 +98,12 @@ def LoadAllowedWords():
             AllowedWords.append(Word.strip().upper())
         WordsFile.close()
     except:
-        pass
+        print("###########################################")
+        print("MISSING DICTIONARY FILE 'chilwellwords.txt'")
+        print("-------------------------------------------")
+        print("The game will not function properly without")
+        print("It is recommend that you replace this file")
+        print("###########################################")
     return AllowedWords
 
 
