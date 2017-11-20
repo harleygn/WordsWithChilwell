@@ -2,6 +2,7 @@ import csv
 import time
 import random
 import operator
+import threading
 import letter_frequencies
 
 
@@ -102,7 +103,7 @@ def LoadAllowedWords():
         print("MISSING DICTIONARY FILE 'chilwellwords.txt'")
         print("-------------------------------------------")
         print("The game will not function properly without")
-        print("a dictioanry to validate words.")
+        print("a dictionary to validate words.")
         print("It is essential that you replace this file.")
         print("###########################################")
     return AllowedWords
@@ -181,9 +182,13 @@ def UpdateScoreWithPenalty(PlayerScore, PlayerTiles, TileDictionary):
     return PlayerScore
 
 
+def CancelTimer(Timer):
+    Timer.cancel()
+
+
 def GetChoice():
     print()
-    print("Either:")
+    print("You have 30 SECONDS to either:")
     print("     enter the word you would like to play OR")
     print("     press 1 to display the letter values OR")
     print("     press 4 to view the tile queue OR")
@@ -274,12 +279,14 @@ def SavePlayerScores(PlayerOneName, PlayerOneScore, PlayerTwoName, PlayerTwoScor
 
 def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictionary, TileQueue, AllowedWords,
              MaxHandSize, NoOfEndOfTurnTiles):
+    TurnTimer = threading.Timer(10, print, ["Time up! Your turn is forfeited"])
     print()
     print(PlayerName, "it is your turn.")
     DisplayTilesInHand(PlayerTiles)
     NewTileChoice = "2"
     min_word_length = 3
     ValidChoice = False
+    TurnTimer.start()
     while not ValidChoice:
         Choice = GetChoice()
         if Choice == "1":
@@ -292,6 +299,7 @@ def HaveTurn(PlayerName, PlayerTiles, PlayerTilesPlayed, PlayerScore, TileDictio
             ValidChoice = True
             TileQueue, PlayerTiles = FillHandWithTiles(TileQueue, PlayerTiles, MaxHandSize)
         else:
+            TurnTimer.cancel()
             ValidChoice = True
             if len(Choice) < min_word_length:
                 ValidWord = False
