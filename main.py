@@ -235,8 +235,11 @@ def LoadScores():
             return None
 
 
-def DisplayLeaderboard():
+def DisplayLeaderboard(SortBy=1,Reverse=True):
     ScoreList = LoadScores()
+    #the function variables are needed here because numbers are interpeted as strings
+    #so they end up in reverse order
+    ScoreList = sorted(ScoreList, reverse=Reverse, key=operator.itemgetter(SortBy))
     if not ScoreList:
         print()
         print("Leaderboard is empty")
